@@ -14,75 +14,91 @@
     <div class="container mx-auto p-4">
         <div class="mb-8 text-center">
             <h1 class="text-3xl font-bold text-gray-800">Corbin Radiologists Schedule</h1>
-            <p class="text-gray-600">Manage rotations and schedules efficiently</p>
+            <p class="text-gray-600">Advanced Scheduling System</p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Calendar Section -->
-            <div class="lg:col-span-2 bg-white rounded-lg shadow-md p-4">
-                <div class="mb-4 flex justify-between items-center">
-                    <button id="prevMonth" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <h2 id="currentMonth" class="text-xl font-semibold"></h2>
-                    <button id="nextMonth" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+                    <div class="mb-4 flex justify-between items-center">
+                        <button id="prevMonth" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <h2 id="currentMonth" class="text-xl font-semibold"></h2>
+                        <button id="nextMonth" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-7 gap-2">
+                        <div class="text-center font-semibold">Sun</div>
+                        <div class="text-center font-semibold">Mon</div>
+                        <div class="text-center font-semibold">Tue</div>
+                        <div class="text-center font-semibold">Wed</div>
+                        <div class="text-center font-semibold">Thu</div>
+                        <div class="text-center font-semibold">Fri</div>
+                        <div class="text-center font-semibold">Sat</div>
+                    </div>
+                    <div id="calendar" class="grid grid-cols-7 gap-2 mt-2"></div>
                 </div>
-                <div class="grid grid-cols-7 gap-2">
-                    <div class="text-center font-semibold">Sun</div>
-                    <div class="text-center font-semibold">Mon</div>
-                    <div class="text-center font-semibold">Tue</div>
-                    <div class="text-center font-semibold">Wed</div>
-                    <div class="text-center font-semibold">Thu</div>
-                    <div class="text-center font-semibold">Fri</div>
-                    <div class="text-center font-semibold">Sat</div>
+
+                <!-- Annual Targets Section -->
+                <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+                    <h3 class="text-lg font-semibold mb-4">Annual Targets</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="annualTargets">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Hospital Days</label>
+                            <input type="number" id="hospitalTarget" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" value="120">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">ODC Days</label>
+                            <input type="number" id="odcTarget" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" value="120">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Vacation Days</label>
+                            <input type="number" id="vacationTarget" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" value="60">
+                        </div>
+                    </div>
                 </div>
-                <div id="calendar" class="grid grid-cols-7 gap-2 mt-2"></div>
             </div>
 
             <!-- Controls Section -->
             <div class="space-y-6">
+                <!-- Vacation Request Form -->
                 <div class="bg-white rounded-lg shadow-md p-4">
-                    <h3 class="text-lg font-semibold mb-4">Assign Rotation</h3>
-                    <form id="rotationForm" class="space-y-4">
+                    <h3 class="text-lg font-semibold mb-4">Request Time Off</h3>
+                    <form id="requestForm" class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Radiologist</label>
-                            <select id="radiologist" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                            <select id="requestRadiologist" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                                 <option value="Reedy">Dr. Reedy</option>
                                 <option value="Bargo">Dr. Bargo</option>
                                 <option value="Croce">Dr. Croce</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Rotation Type</label>
-                            <select id="rotationType" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                                <option value="Hospital">Hospital</option>
-                                <option value="ODC">ODC</option>
-                                <option value="Vacation">Vacation</option>
-                            </select>
-                        </div>
-                        <div>
                             <label class="block text-sm font-medium text-gray-700">Start Date</label>
-                            <input type="date" id="startDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                            <input type="date" id="requestStartDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">End Date</label>
-                            <input type="date" id="endDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                            <input type="date" id="requestEndDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                         </div>
                         <button type="submit" class="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                            Assign Rotation
+                            Submit Request
                         </button>
                     </form>
                 </div>
 
+                <!-- Statistics -->
                 <div class="bg-white rounded-lg shadow-md p-4">
                     <h3 class="text-lg font-semibold mb-4">Rotation Statistics</h3>
                     <div id="statistics" class="space-y-2"></div>
                 </div>
 
-                <button id="initializeSchedule" class="w-full bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
-                    Initialize Schedule
+                <!-- Action Buttons -->
+                <button id="optimizeSchedule" class="w-full bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                    Generate Optimized Schedule
                 </button>
 
                 <button id="exportToICal" class="w-full bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600">
@@ -106,85 +122,215 @@
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-        
+
+        // Schedule Optimizer Class
+        class ScheduleOptimizer {
+            constructor() {
+                this.annualTargets = {
+                    Hospital: parseInt(document.getElementById('hospitalTarget').value),
+                    ODC: parseInt(document.getElementById('odcTarget').value),
+                    Vacation: parseInt(document.getElementById('vacationTarget').value)
+                };
+                this.radiologists = ['Reedy', 'Bargo', 'Croce'];
+                this.blockSize = 14; // 2-week blocks
+                this.blocks = [];
+                this.requests = new Map();
+            }
+
+            async loadRequests() {
+                const snapshot = await db.collection('requests').get();
+                snapshot.docs.forEach(doc => {
+                    const data = doc.data();
+                    this.requests.set(`${data.radiologist}-${data.startDate}`, {
+                        ...data,
+                        startDate: data.startDate.toDate(),
+                        endDate: data.endDate.toDate()
+                    });
+                });
+            }
+
+            initializeBlocks() {
+                const startDate = new Date(2024, 1, 3); // Feb 3, 2024
+                let currentDate = new Date(startDate);
+                
+                while (currentDate < new Date(startDate.getFullYear() + 1, startDate.getMonth(), startDate.getDate())) {
+                    let block = {
+                        startDate: new Date(currentDate),
+                        endDate: new Date(currentDate.setDate(currentDate.getDate() + this.blockSize - 1)),
+                        assignments: new Map(),
+                        workingDays: 0
+                    };
+                    
+                    let blockDate = new Date(block.startDate);
+                    while (blockDate <= block.endDate) {
+                        if (blockDate.getDay() !== 0 && blockDate.getDay() !== 6) {
+                            block.workingDays++;
+                        }
+                        blockDate.setDate(blockDate.getDate() + 1);
+                    }
+                    
+                    this.blocks.push(block);
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+            }
+
+            async optimize() {
+                await this.loadRequests();
+                this.initializeBlocks();
+                this.processRequests();
+                this.distributeRotations();
+                this.balanceSchedule();
+                return this.generateScheduleData();
+            }
+
+            processRequests() {
+                this.requests.forEach(request => {
+                    const affectedBlocks = this.blocks.filter(block => 
+                        !(request.endDate < block.startDate || request.startDate > block.endDate)
+                    );
+                    
+                    affectedBlocks.forEach(block => {
+                        block.assignments.set(request.radiologist, 'Vacation');
+                    });
+                });
+            }
+
+            distributeRotations() {
+                const rotationCounts = new Map();
+                this.radiologists.forEach(rad => {
+                    rotationCounts.set(rad, {
+                        Hospital: 0,
+                        ODC: 0,
+                        Vacation: 0
+                    });
+                });
+
+                this.blocks.forEach(block => {
+                    this.radiologists.forEach(rad => {
+                        if (!block.assignments.has(rad)) {
+                            const counts = rotationCounts.get(rad);
+                            const nextRotation = this.getNextOptimalRotation(counts);
+                            block.assignments.set(rad, nextRotation);
+                            counts[nextRotation] += block.workingDays;
+                        }
+                    });
+                });
+            }
+
+            getNextOptimalRotation(counts) {
+                const ratios = {
+                    Hospital: counts.Hospital / this.annualTargets.Hospital,
+                    ODC: counts.ODC / this.annualTargets.ODC,
+                    Vacation: counts.Vacation / this.annualTargets.Vacation
+                };
+                
+                return Object.entries(ratios)
+                    .sort(([,a], [,b]) => a - b)[0][0];
+            }
+
+            balanceSchedule() {
+                let improved = true;
+                while (improved) {
+                    improved = false;
+                    for (let i = 0; i < this.blocks.length - 1; i++) {
+                        if (this.trySwapBlock(this.blocks[i], this.blocks[i + 1])) {
+                            improved = true;
+                        }
+                    }
+                }
+            }
+
+            trySwapBlock(block1, block2) {
+                let improved = false;
+                this.radiologists.forEach(rad1 => {
+                    this.radiologists.forEach(rad2 => {
+                        if (rad1 !== rad2) {
+                            const type1 = block1.assignments.get(rad1);
+                            const type2 = block2.assignments.get(rad2);
+                            
+                            if (this.isSwapBeneficial(type1, type2)) {
+                                block1.assignments.set(rad1, type2);
+                                block2.assignments.set(rad2, type1);
+                                improved = true;
+                            }
+                        }
+                    });
+                });
+                return improved;
+            }
+
+            isSwapBeneficial(type1, type2) {
+                return type1 !== type2 && type1 !== 'Vacation' && type2 !== 'Vacation';
+            }
+
+            generateScheduleData() {
+                let scheduleData = [];
+                
+                this.blocks.forEach(block => {
+                    let currentDate = new Date(block.startDate);
+                    while (currentDate <= block.endDate) {
+                        if (currentDate.getDay() !== 0 && currentDate.getDay() !== 6) {
+                            block.assignments.forEach((rotation, radiologist) => {
+                                scheduleData.push({
+                                    date: new Date(currentDate),
+                                    radiologist: radiologist,
+                                    rotation: rotation
+                                });
+                            });
+                        }
+                        currentDate.setDate(currentDate.getDate() + 1);
+                    }
+                });
+                
+                return scheduleData;
+            }
+        }
+
+        // Global variables
         let scheduleData = [];
-        const radiologists = ['Reedy', 'Bargo', 'Croce'];
-        const rotationTypes = ['Hospital', 'ODC', 'Vacation'];
         let currentDate = new Date(2024, 1, 3); // Start from Feb 3, 2024
 
-        // Load data from Firestore
+        // Firebase functions
+        async function saveScheduleData(data) {
+            const batch = db.batch();
+            
+            // Clear existing schedule
+            const snapshot = await db.collection('schedule').get();
+            snapshot.docs.forEach((doc) => {
+                batch.delete(doc.ref);
+            });
+
+            // Add new schedule
+            data.forEach((item) => {
+                const docRef = db.collection('schedule').doc();
+                batch.set(docRef, {
+                    ...item,
+                    date: firebase.firestore.Timestamp.fromDate(new Date(item.date))
+                });
+            });
+
+            await batch.commit();
+        }
+
+        async function saveRequest(request) {
+            await db.collection('requests').add({
+                ...request,
+                startDate: firebase.firestore.Timestamp.fromDate(new Date(request.startDate)),
+                endDate: firebase.firestore.Timestamp.fromDate(new Date(request.endDate))
+            });
+        }
+
         async function loadScheduleData() {
             const snapshot = await db.collection('schedule').get();
             scheduleData = snapshot.docs.map(doc => ({
                 ...doc.data(),
-                date: new Date(doc.data().date.toDate())
+                date: doc.data().date.toDate()
             }));
             updateCalendar();
             updateStatistics();
         }
 
-        // Save data to Firestore
-        async function saveScheduleData() {
-            // Clear existing data
-            const snapshot = await db.collection('schedule').get();
-            const batch = db.batch();
-            snapshot.docs.forEach((doc) => {
-                batch.delete(doc.ref);
-            });
-            await batch.commit();
-
-            // Add new data
-            const newBatch = db.batch();
-            scheduleData.forEach((item) => {
-                const docRef = db.collection('schedule').doc();
-                newBatch.set(docRef, {
-                    ...item,
-                    date: firebase.firestore.Timestamp.fromDate(new Date(item.date))
-                });
-            });
-            await newBatch.commit();
-        }
-
-        async function generateInitialSchedule() {
-            scheduleData = [];
-            const startDate = new Date(2024, 1, 3); // Feb 3, 2024
-            let currentDate = new Date(startDate);
-            
-            // Initial assignments
-            let initialPattern = [
-                { radiologist: 'Bargo', rotation: 'Hospital' },
-                { radiologist: 'Croce', rotation: 'ODC' },
-                { radiologist: 'Reedy', rotation: 'Vacation' }
-            ];
-
-            // Generate schedule for the year
-            for (let week = 0; week < 52; week++) {
-                for (let day = 0; day < 5; day++) { // Monday through Friday
-                    if (currentDate.getDay() !== 0 && currentDate.getDay() !== 6) {
-                        initialPattern.forEach(assignment => {
-                            scheduleData.push({
-                                date: new Date(currentDate),
-                                radiologist: assignment.radiologist,
-                                rotation: assignment.rotation
-                            });
-                        });
-                    }
-                    currentDate.setDate(currentDate.getDate() + 1);
-                }
-
-                // Rotate pattern weekly
-                initialPattern = [
-                    { radiologist: initialPattern[2].radiologist, rotation: 'Hospital' },
-                    { radiologist: initialPattern[0].radiologist, rotation: 'ODC' },
-                    { radiologist: initialPattern[1].radiologist, rotation: 'Vacation' }
-                ];
-            }
-
-            await saveScheduleData();
-            updateCalendar();
-            updateStatistics();
-        }
-
+        // UI functions
         function updateCalendar() {
             const calendar = document.getElementById('calendar');
             const monthDisplay = document.getElementById('currentMonth');
@@ -198,17 +344,14 @@
             const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
             const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
 
-            // Add empty cells for days before first of month
             for (let i = 0; i < firstDay.getDay(); i++) {
                 calendar.appendChild(createCalendarCell(''));
             }
 
-            // Add cells for each day
             for (let day = 1; day <= lastDay.getDate(); day++) {
                 const cell = createCalendarCell(day);
                 const cellDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
                 
-                // Find assignments for this day
                 const assignments = scheduleData.filter(item => 
                     item.date.toDateString() === cellDate.toDateString()
                 );
@@ -249,6 +392,9 @@
             const stats = document.getElementById('statistics');
             stats.innerHTML = '';
 
+            const radiologists = ['Reedy', 'Bargo', 'Croce'];
+            const rotationTypes = ['Hospital', 'ODC', 'Vacation'];
+
             radiologists.forEach(radiologist => {
                 const radiologistStats = document.createElement('div');
                 radiologistStats.className = 'mb-4';
@@ -283,7 +429,7 @@
             scheduleData.forEach(item => {
                 const dateStr = item.date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
                 const endDate = new Date(item.date);
-                endDate.setHours(17); // Set to 5 PM
+                endDate.setHours(17);
                 const endDateStr = endDate.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
 
                 icsContent = icsContent.concat([
@@ -308,15 +454,6 @@
             window.URL.revokeObjectURL(url);
         }
 
-        // Set up real-time updates
-        db.collection('schedule').onSnapshot((snapshot) => {
-            snapshot.docChanges().forEach((change) => {
-                if (change.type === "added" || change.type === "modified") {
-                    loadScheduleData();
-                }
-            });
-        });
-
         // Event Listeners
         document.getElementById('prevMonth').addEventListener('click', () => {
             currentDate.setMonth(currentDate.getMonth() - 1);
@@ -328,44 +465,39 @@
             updateCalendar();
         });
 
-        document.getElementById('rotationForm').addEventListener('submit', async (e) => {
+        document.getElementById('requestForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const radiologist = document.getElementById('radiologist').value;
-            const rotation = document.getElementById('rotationType').value;
-            const startDate = new Date(document.getElementById('startDate').value);
-            const endDate = new Date(document.getElementById('endDate').value);
+            const request = {
+                radiologist: document.getElementById('requestRadiologist').value,
+                startDate: new Date(document.getElementById('requestStartDate').value),
+                endDate: new Date(document.getElementById('requestEndDate').value)
+            };
 
-            let currentDate = new Date(startDate);
-            while (currentDate <= endDate) {
-                if (currentDate.getDay() !== 0 && currentDate.getDay() !== 6) {
-                    // Remove existing assignments for this date
-                    scheduleData = scheduleData.filter(item => 
-                        item.date.toDateString() !== currentDate.toDateString()
-                    );
-
-                    // Add new assignment
-                    scheduleData.push({
-                        date: new Date(currentDate),
-                        radiologist: radiologist,
-                        rotation: rotation
-                    });
-                }
-                currentDate.setDate(currentDate.getDate() + 1);
-            }
-
-            await saveScheduleData();
-            updateCalendar();
-            updateStatistics();
+            await saveRequest(request);
+            alert('Request submitted successfully!');
         });
 
-        document.getElementById('initializeSchedule').addEventListener('click', generateInitialSchedule);
+        document.getElementById('optimizeSchedule').addEventListener('click', async () => {
+            const optimizer = new ScheduleOptimizer();
+            const newSchedule = await optimizer.optimize();
+            await saveScheduleData(newSchedule);
+            loadScheduleData();
+        });
+
         document.getElementById('exportToICal').addEventListener('click', exportToICal);
+
+        // Set up real-time updates
+        db.collection('schedule').onSnapshot((snapshot) => {
+            snapshot.docChanges().forEach((change) => {
+                if (change.type === "added" || change.type === "modified") {
+                    loadScheduleData();
+                }
+            });
+        });
 
         // Initial load
         loadScheduleData();
-        updateCalendar();
-        updateStatistics();
     </script>
 </body>
 </html>
