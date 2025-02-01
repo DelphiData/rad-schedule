@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corbin Radiologists Schedule</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+    <div class="container mx-auto p-4">
+        <div class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-gray-800">Corbin Radiologists Schedule</h1>
+            <p class="text-gray-600">Manage rotations and schedules efficiently</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Calendar Section -->
+            <div class="lg:col-span-2 bg-white rounded-lg shadow-md p-4">
+                <div class="mb-4 flex justify-between items-center">
+                    <button id="prevMonth" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <h2 id="currentMonth" class="text-xl font-semibold"></h2>
+                    <button id="nextMonth" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <div class="grid grid-cols-7 gap-2">
+                    <div class="text-center font-semibold">Sun</div>
+                    <div class="text-center font-semibold">Mon</div>
+                    <div class="text-center font-semibold">Tue</div>
+                    <div class="text-center font-semibold">Wed</div>
+                    <div class="text-center font-semibold">Thu</div>
+                    <div class="text-center font-semibold">Fri</div>
+                    <div class="text-center font-semibold">Sat</div>
+                </div>
+                <div id="calendar" class="grid grid-cols-7 gap-2 mt-2"></div>
+            </div>
+
+            <!-- Controls Section -->
+            <div class="space-y-6">
+                <div class="bg-white rounded-lg shadow-md p-4">
+                    <h3 class="text-lg font-semibold mb-4">Assign Rotation</h3>
+                    <form id="rotationForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Radiologist</label>
+                            <select id="radiologist" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                                <option value="Reedy">Dr. Reedy</option>
+                                <option value="Bargo">Dr. Bargo</option>
+                                <option value="Croce">Dr. Croce</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Rotation Type</label>
+                            <select id="rotationType" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                                <option value="Hospital">Hospital</option>
+                                <option value="ODC">ODC</option>
+                                <option value="Vacation">Vacation</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Start Date</label>
+                            <input type="date" id="startDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">End Date</label>
+                            <input type="date" id="endDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        </div>
+                        <button type="submit" class="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                            Assign Rotation
+                        </button>
+                    </form>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-4">
+                    <h3 class="text-lg font-semibold mb-4">Rotation Statistics</h3>
+                    <div id="statistics" class="space-y-2"></div>
+                </div>
+
+                <button id="initializeSchedule" class="w-full bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                    Initialize Schedule
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let scheduleData = [];
+        const radiologists = ['Reedy', 'Bargo', 'Croce'];
+        const rotationTypes = ['Hospital', 'ODC', 'Vacation'];
+        let currentDate = new Date(2024, 1, 3); // Start from Feb 3, 2024
+
+        // Load data from localStorage
+        function loadScheduleData() {
+            const saved = localStorage.getItem('scheduleData');
+            if (saved) {
+                scheduleData = JSON.parse(saved).map(item => ({
+                    ...item,
+                    date: new Date(item.date)
+                }));
+            }
+        }
+
+        // Save data to localStorage
+        function saveScheduleData() {
+            localStorage.setItem('scheduleData', JSON.stringify(scheduleData));
+        }
+
+        function generateInitialSchedule() {
+            scheduleData = [];
+            const startDate = new Date(2024, 1, 3); // Feb 3, 2024
+            let currentDate = new Date(startDate);
+            
+            // Initial assignments
+            let initialPattern = [
+                { radiologist: 'Bargo', rotation: 'Hospital' },
+                { radiologist: 'Croce', rotation: 'ODC' },
+                { radiologist: 'Reedy', rotation: 'Vacation' }
+            ];
+
+            // Generate schedule for the year
+            for (let week = 0; week < 52; week++) {
+                for (let day = 0; day < 5; day++) { // Monday through Friday
+                    if (currentDate.getDay() !== 0 && currentDate.getDay() !== 6) {
+                        initialPattern.forEach(assignment => {
+                            scheduleData.push({
+                                date: new Date(currentDate),
+                                radiologist: assignment.radiologist,
+                                rotation: assignment.rotation
+                            });
+                        });
+                    }
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+
+                // Rotate pattern weekly
+                initialPattern = [
+                    { radiologist: initialPattern[2].radiologist, rotation: 'Hospital' },
+                    { radiologist: initialPattern[0].radiologist, rotation: 'ODC' },
+                    { radiologist: initialPattern[1].radiologist, rotation: 'Vacation' }
+                ];
+            }
+
+            saveScheduleData();
+            updateCalendar();
+            updateStatistics();
+        }
+
+        function updateCalendar() {
+            const calendar = document.getElementById('calendar');
+            const monthDisplay = document.getElementById('currentMonth');
+            
+            calendar.innerHTML = '';
+            monthDisplay.textContent = new Intl.DateTimeFormat('en-US', { 
+                month: 'long', 
+                year: 'numeric' 
+            }).format(currentDate);
+
+            const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+            const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+
+            // Add empty cells for days before first of month
+            for (let i = 0; i < firstDay.getDay(); i++) {
+                calendar.appendChild(createCalendarCell(''));
+            }
+
+            // Add cells for each day
+            for (let day = 1; day <= lastDay.getDate(); day++) {
+                const cell = createCalendarCell(day);
+                const cellDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+                
+                // Find assignments for this day
+                const assignments = scheduleData.filter(item => 
+                    item.date.toDateString() === cellDate.toDateString()
+                );
+
+                assignments.forEach(assignment => {
+                    const assignmentDiv = document.createElement('div');
+                    assignmentDiv.className = `text-xs ${getRotationColor(assignment.rotation)}`;
+                    assignmentDiv.textContent = `${assignment.radiologist}: ${assignment.rotation}`;
+                    cell.appendChild(assignmentDiv);
+                });
+
+                calendar.appendChild(cell);
+            }
+        }
+
+        function createCalendarCell(content) {
+            const cell = document.createElement('div');
+            cell.className = 'border p-2 min-h-[100px] bg-white';
+            if (content) {
+                const dayNumber = document.createElement('div');
+                dayNumber.className = 'font-bold';
+                dayNumber.textContent = content;
+                cell.appendChild(dayNumber);
+            }
+            return cell;
+        }
+
+        function getRotationColor(rotation) {
+            switch (rotation) {
+                case 'Hospital': return 'text-blue-600';
+                case 'ODC': return 'text-green-600';
+                case 'Vacation': return 'text-red-600';
+                default: return 'text-gray-600';
+            }
+        }
+
+        function updateStatistics() {
+            const stats = document.getElementById('statistics');
+            stats.innerHTML = '';
+
+            radiologists.forEach(radiologist => {
+                const radiologistStats = document.createElement('div');
+                radiologistStats.className = 'mb-4';
+                radiologistStats.innerHTML = `<h4 class="font-semibold">Dr. ${radiologist}</h4>`;
+
+                const rotationCounts = {};
+                rotationTypes.forEach(type => {
+                    rotationCounts[type] = scheduleData.filter(item => 
+                        item.radiologist === radiologist && item.rotation === type
+                    ).length;
+                });
+
+                Object.entries(rotationCounts).forEach(([rotation, count]) => {
+                    const rotationDiv = document.createElement('div');
+                    rotationDiv.className = 'text-sm';
+                    rotationDiv.textContent = `${rotation}: ${count} days`;
+                    radiologistStats.appendChild(rotationDiv);
+                });
+
+                stats.appendChild(radiologistStats);
+            });
+        }
+
+        // Event Listeners
+        document.getElementById('prevMonth').addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            updateCalendar();
+        });
+
+        document.getElementById('nextMonth').addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            updateCalendar();
+        });
+
+        document.getElementById('rotationForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const radiologist = document.getElementById('radiologist').value;
+            const rotation = document.getElementById('rotationType').value;
+            const startDate = new Date(document.getElementById('startDate').value);
+            const endDate = new Date(document.getElementById('endDate').value);
+
+            let currentDate = new Date(startDate);
+            while (currentDate <= endDate) {
+                if (currentDate.getDay() !== 0 && currentDate.getDay() !== 6) {
+                    // Remove existing assignments for this date
+                    scheduleData = scheduleData.filter(item => 
+                        item.date.toDateString() !== currentDate.toDateString()
+                    );
+
+                    // Add new assignment
+                    scheduleData.push({
+                        date: new Date(currentDate),
+                        radiologist: radiologist,
+                        rotation: rotation
+                    });
+                }
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+
+            saveScheduleData();
+            updateCalendar();
+            updateStatistics();
+        });
+
+        document.getElementById('initializeSchedule').addEventListener('click', generateInitialSchedule);
+
+        // Initial load
+        loadScheduleData();
+        updateCalendar();
+        updateStatistics();
+    </script>
+</body>
+</html>
