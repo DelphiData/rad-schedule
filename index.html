@@ -81,6 +81,10 @@
                 <button id="initializeSchedule" class="w-full bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
                     Initialize Schedule
                 </button>
+
+                <button id="exportToICal" class="w-full bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600">
+                    Export to Calendar (iCal)
+                </button>
             </div>
         </div>
     </div>
@@ -234,6 +238,42 @@
             });
         }
 
+        function exportToICal() {
+            let icsContent = [
+                'BEGIN:VCALENDAR',
+                'VERSION:2.0',
+                'PRODID:-//Corbin Radiologists Schedule//EN',
+                'CALSCALE:GREGORIAN'
+            ];
+
+            scheduleData.forEach(item => {
+                const dateStr = item.date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+                const endDate = new Date(item.date);
+                endDate.setHours(17); // Set to 5 PM
+                const endDateStr = endDate.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+
+                icsContent = icsContent.concat([
+                    'BEGIN:VEVENT',
+                    `DTSTART:${dateStr}`,
+                    `DTEND:${endDateStr}`,
+                    `SUMMARY:${item.radiologist} - ${item.rotation}`,
+                    'DESCRIPTION:Corbin Radiologists Schedule',
+                    `UID:${dateStr}-${item.radiologist}@corbinrad`,
+                    'END:VEVENT'
+                ]);
+            });
+
+            icsContent.push('END:VCALENDAR');
+
+            const blob = new Blob([icsContent.join('\r\n')], { type: 'text/calendar' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'corbin_schedule.ics';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
         // Event Listeners
         document.getElementById('prevMonth').addEventListener('click', () => {
             currentDate.setMonth(currentDate.getMonth() - 1);
@@ -277,6 +317,7 @@
         });
 
         document.getElementById('initializeSchedule').addEventListener('click', generateInitialSchedule);
+        document.getElementById('exportToICal').addEventListener('click', exportToICal);
 
         // Initial load
         loadScheduleData();
